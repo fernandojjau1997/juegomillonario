@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Millonario</title>
+	<link rel="stylesheet" type="text/css" href="asset/css/bootstrap.css.map">
+	<link rel="stylesheet" type="text/css" href="asset/css/bootstrap.css">
+
+	</head>
+<body>
+
+	<div class="container-fluid">
+		<div class="row">
+
+			<!-- Logo -->
+			<div class="col-md-4 text-center">				
+				<img class="" src="img/millonario1.png" width="400">
+			</div>
+
+			<div class="estadistica" class="col-md-4 text-center">
+				<h3 id="nivelactual"></h3>
+				<h6 id="dinero"></h6>
+				<h6 id="dinero2"></h6>
+			</div>
+
+
+			<div id="grafico" class="col-md-4 text-center" style="visibility: hidden;">
+				<div class="row">
+					<div class="col-md-12">
+						<h1>Audiencia</h1>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+					<div class="indice aqui" style="width: 100px; display: inline-block;  background-color: yellow;">
+						<p class="escrito escribe"></p> 
+					</div>
+
+					<div class="indice aqui" style="width: 100px; display: inline-block;  background-color: green;">
+						<p class="escrito escribe1"></p>
+					</div>
+
+					<div class="indice aqui" style="width: 100px; display: inline-block;  background-color: red;">
+						<p class="escrito escribe2"></p>
+					</div>
+
+					<div class="indice aqui" style="width: 100px; display: inline-block;  background-color: purple;">
+						<p class="escrito escribe3"></p>
+					</div>
+					</div>
+					
+				</div>
+			</div>
+
+		</div>
+
+		
+		<!-- MENU DE JUEGO -->
+		<div class="row text-center" id="menu">
+
+			<div class="col-md-6 text-right">
+				<a class="btn btn-info" href="info.html">Info</a>
+			</div>
+
+			<div class="col-md-6 text-left">
+				<button  class="jugar btn btn-success" >Jugar</button>
+			</div>
+
+		</div>
+
+		<div class="row text-center" id="titulocomodin" style="visibility: hidden;">
+			<div class="col-md-12">
+				<h2>Comodines</h2>
+			</div>
+		</div>
+
+		<!-- MENU DE JUEGO -->
+		<div class="row text-center m-3" id="comodines" style="visibility: hidden;">
+
+			<div class="col-md-3 text-right">
+				<button class="btn btn-info" id="comodinAmigo">Llamar a un amigo</button>
+			</div>
+
+			<div class="col-md-3 text-center">
+				<button  class="btn btn-info" id="audiencia">Audiencia</button>
+			</div>
+
+			<div class="col-md-3 text-center">
+				<button  class="btn btn-info" id="comodin5050">50 / 50</button>
+			</div>
+
+			<div class="col-md-3 text-left" id="rendirse">
+				<button  class="btn btn-warning">Rendirse</button>
+			</div>
+
+		</div>
+
+			
+
+		<!-- Pregunta -->
+		<div class="row ">
+			<div class="col-md-12 text-center pregunta contenido">
+			</div>
+		</div>
+
+		<!-- OPCIONES -->
+		<div class="row ">
+			<div class="opcion col-md-6 text-center respuesta1" id="op1">
+			</div>
+			<div class="opcion col-md-6 text-center respuesta2" id="op2">
+			</div>
+		</div>
+
+		<!-- OPCIONES -->
+		<div class="row ">
+			<div class="opcion col-md-6 text-center respuesta3" id="op3">
+			</div>
+			<div class="opcion col-md-6 text-center respuesta4" id="op4">
+			</div>
+		</div>
+
+				<!-- Pregunta -->
+		<div class="row ">
+			<div class="col-md-12 text-center respuestacomodin contenido2">
+			</div>
+		</div>
+
+
+		
+	</div>
+
+	<script type="text/javascript">
+
+	
+	
+	//Escuchador de Evento
+	const menu_juego = document.querySelector('#menu');
+	const menu_juego2 = document.querySelector('#menu2');
+	const play = document.querySelector('.jugar');
+	const titulocomodin = document.querySelector('#titulocomodin');
+	const comodines = document.querySelector('#comodines');
+	const rendirse = document.querySelector('#rendirse');
+	const comodinAmigo = document.querySelector('#comodinAmigo');
+	const comodin5050 = document.querySelector('#comodin5050');
+	const audiencia = document.querySelector('#audiencia');
+
+	//Pregunta
+	const contenido = document.querySelector('.contenido');
+	const contenido2 = document.querySelector('.contenido2');
+
+	//Opciones
+	const contenedor1 = document.querySelector('.respuesta1');
+	const contenedor2 = document.querySelector('.respuesta2');
+	const contenedor3 = document.querySelector('.respuesta3');
+	const contenedor4 = document.querySelector('.respuesta4');
+	
+	let textoPregunta = document.querySelector('.pregunta');
+	let respuestacomodin = document.querySelector('.respuestacomodin');
+	let opcion1 = document.querySelector('#op1');
+	let opcion2 = document.querySelector('#op2');
+	let opcion3 = document.querySelector('#op3');
+	let opcion4 = document.querySelector('#op4');
+
+	let nivel = 0;
+	let acumulado = 100;
+	let control = 0;
+	let comodin_usado = false;
+
+	let caja_nivel_actual;
+	let texto_nivel_actual
+	let caja_dinero;                 
+	let texto_dinero;
+	let caja_dinero2;                 
+	let texto_dinero2;
+	
+
+	play.addEventListener('click', juego);
+	
+	rendirse.addEventListener('click', function () {
+		terminarPartida(nivel);
+	});
+
+	comodinAmigo.addEventListener('click', function (e) {
+		// console.log(e.target);
+		e.target.style.visibility = "hidden";
+		llamarAmigo(nivel);
+	});
+
+	comodin5050.addEventListener('click',function (e) {
+		e.target.style.visibility = "hidden";
+		removerDosOpciones(nivel);
+	});
+
+	audiencia.addEventListener('click',function (e) {
+		e.target.style.visibility = "hidden";
+		construyeGrafico(nivel);
+	});
+	
+
+	function juego () {
+		// console.log(acumulado);
+
+		
+
+		if(control == 0){
+			menu_juego.style.visibility = 'hidden';
+		 	titulocomodin.style.visibility = 'visible';
+			comodines.style.visibility = 'visible';
+			control++;
+		}
+
+
+		if(nivel > 0 && nivel < 15){
+
+			removerElementos();
+			acumulado *=2; 
+
+		}else
+			if(nivel == 15){
+
+				removerElementos();
+				mensajeJuego("Eres El Ganador de Quien Quiere Ser Millonario Felicitaciones !!!!!.. Haz Ganado" 
+							+ acumulado*2 + "$", "success");
+			  	return
+			}
+
+		if(comodin_usado){
+			grafico.style.visibility = 'hidden';
+		}
+		
+		
+		//Creamos la pregunta
+		textoPregunta = document.createElement('h3');
+	  	textoPregunta.textContent =  ronda[nivel].pregunta;
+	  	contenido.appendChild(textoPregunta);
+
+	  	//Creamos las respuestas
+	  	opcion1 = document.createElement('button');
+	  	opcion1.textContent = "Opcion A : " +  ronda[nivel].respuesta[0];
+	  	opcion1.className += " btn btn-primary mt-3";
+	  	opcion1.setAttribute("id", "1");
+	  	contenedor1.appendChild(opcion1);
+
+	  	opcion2 = document.createElement('button');
+	  	opcion2.textContent = "Opcion B : " +  ronda[nivel].respuesta[1];
+	  	opcion2.className += " btn btn-primary mt-3";
+	  	opcion2.setAttribute("id", "2");
+	  	contenedor2.appendChild(opcion2);
+
+	  	opcion3 = document.createElement('button');
+	  	opcion3.textContent = "Opcion C : " +  ronda[nivel].respuesta[2];
+	  	opcion3.className += " btn btn-primary mt-3";
+	  	opcion3.setAttribute("id", "3");
+	  	contenedor3.appendChild(opcion3);
+
+	  	opcion4 = document.createElement('button');
+	  	opcion4.textContent = "Opcion D : " +  ronda[nivel].respuesta[3];
+	  	opcion4.className += " btn btn-primary mt-3";
+	  	opcion4.setAttribute("id", "4");
+	  	contenedor4.appendChild(opcion4);
+
+	  	actualizarEstadistica(nivel);
+	  	//Seleccionamos nuestras opciones
+	  	let opcion_clikeada = document.querySelectorAll('.row .opcion button');
+	  	
+	  	//Identificamos cual tiene un evento
+	  	for (var i = 0; i < opcion_clikeada.length; i++) {
+	  		opcion_clikeada[i].addEventListener('click', function (e) {
+			  	 	laRespuestaEs(e.target.id);
+			  	 });
+	  	}
+
+	}
+
+	function remueveEstadisticas() {
+		document.querySelector("#nivelactual").removeChild(caja_nivel_actual);
+		document.querySelector("#dinero").removeChild(caja_dinero);
+		document.querySelector("#dinero2").removeChild(caja_dinero2);
+	}
+
+	function actualizarEstadistica(nivel) {
+		console.log(nivel);
+		if (nivel > 0) {
+			remueveEstadisticas();
+		}
+
+		nivel += 1;
+		console.log(nivel);
+		//CONSTRUYE EL NIVEL
+		caja_nivel_actual = document.createElement("span");                 
+		texto_nivel_actual = document.createTextNode("Nivel: " + nivel);         
+		caja_nivel_actual.appendChild(texto_nivel_actual);                              
+		document.querySelector("#nivelactual").appendChild(caja_nivel_actual);
+
+		//CONSTRUYE EL ACUMULADO HASTA EL MOMENTO
+		caja_dinero = document.createElement("span");  
+		if(nivel != 1){               
+			texto_dinero = document.createTextNode("Acumulado: " + acumulado + "$");         
+		}else{
+			texto_dinero = document.createTextNode("Acumulado: 0$");
+		}
+		caja_dinero.appendChild(texto_dinero);                              
+		document.querySelector("#dinero").appendChild(caja_dinero);
+
+		//CONSTRUYE EL VALOR DE LA PREGUNTA
+		caja_dinero2 = document.createElement("span");                 
+		texto_dinero2 = document.createTextNode("Acumulara: " + premioPorParticipar(nivel) + "$" + " .Si responde bien esta pregunta");
+		caja_dinero2.appendChild(texto_dinero2);                              
+		document.querySelector("#dinero2").appendChild(caja_dinero2);
+		
+
+
+	}
+
+	//Funcion encargada de realizar el grafico y porcentaje de las preguntas
+	function construyeGrafico(nivel) {
+
+		let indice = document.querySelectorAll(".indice");
+		let escrito = document.querySelectorAll('.escrito');
+		let escribe = document.querySelector('.escribe');
+		let escribe1 = document.querySelector('.escribe1');
+		let escribe2 = document.querySelector('.escribe2');
+		let escribe3 = document.querySelector('.escribe3');
+		let porcentaje, porcentaje2, porcentaje3, porcentaje4;
+
+		for (var i = 0; i < 4; i++) {
+			indice[i].style.height = ronda[nivel].grafico[i];
+			
+		}
+
+		porcentaje = indice[0].style.height.split("px");
+		porcentaje2 = indice[1].style.height.split("px");
+		porcentaje3= indice[2].style.height.split("px");
+		porcentaje4 = indice[3].style.height.split("px");
+		// console.log(porcentaje);
+
+		escribe = document.createElement('b');
+	  	escribe.textContent =  "OPCION A " + porcentaje[0]/2 + "%";
+	  	escrito[0].appendChild(escribe);
+
+	  	escribe1 = document.createElement('b');
+	  	escribe1.textContent =  "OPCION B " +  porcentaje2[0]/2 + "%";
+	  	escrito[1].appendChild(escribe1);
+
+	  	escribe2 = document.createElement('b');
+	  	escribe2.textContent =  "OPCION C " +  porcentaje3[0]/2 + "%";
+	  	escrito[2].appendChild(escribe2);
+
+	  	escribe3 = document.createElement('b');
+	  	escribe3.textContent =  "OPCION D " +  porcentaje4[0]/2 + "%";
+	  	escrito[3].appendChild(escribe3);
+
+		let grafico = document.querySelector("#grafico");
+		grafico.style.visibility = 'visible';
+
+		comodin_usado = true;
+
+		
+	}
+
+	//FUNCION QUE EVALUE SI NUESTRA RESPUESTA ES CORRECTO O INCORRECTA
+	function laRespuestaEs(valor) {
+
+		// console.log(nivel);
+		respuesta_correcta = ronda[nivel].correcta;
+		
+		// Si la respuesta es correcta subimos un nivel a iniciar el juego con nuevas preguntas
+		if(valor == respuesta_correcta){
+
+			nivel++;
+			juego();
+
+		}else{//Si Perdemos evaluamos donde perdimos
+
+			terminarPartida(nivel);
+			
+		}
+
+	}
+
+	//Funcion que remueve dos opciones a escojer
+	function removerDosOpciones(nivel) {
+		let correcta;
+		let elimina = 0;
+
+		//Seleccionamos nuestras opciones
+	  	let opciones = document.querySelectorAll('.row .opcion button');
+
+		for (var i = 0; i < ronda.length; i++) {
+			if(ronda[i].nivel == nivel){
+				// console.log("estamos en el nivel" + ronda[i].nivel + ronda[i].pregunta);
+				correcta = ronda[i].correcta;
+			}
+		}
+
+		for (i = 0; i < 4; i++) {
+			
+			if(opciones[i].id != correcta && elimina < 2){
+
+				opciones[i].style.visibility = 'hidden';
+				elimina++;
+
+			}
+		}
+		// console.log(opciones[3].id);
+	}
+
+	//Muestra una ventana de alerta con la opcion correcta a la pregunta
+	function llamarAmigo(nivel) {
+		// console.log(nivel);
+		let respuesta;
+		let mensaje;
+		// console.log(e.target);
+		for (var i = 0; i < ronda.length; i++) {
+			if(ronda[i].nivel == nivel){
+				// console.log("estamos en el nivel" + ronda[i].nivel + ronda[i].pregunta);
+				respuesta = ronda[i].correcta;
+			}
+		}
+
+		switch(respuesta){
+
+			case 1: 
+				mensaje = "Es la Opción A"
+			break;
+
+			case 2: 
+				mensaje = "Es la Opción B"
+			break;
+
+			case 3: 
+				mensaje = "Es la Opción C"
+			break;
+
+			case 4: 
+				mensaje = "Es la Opción D"
+			break;
+
+		}
+		alert(mensaje);
+		// console.log(mensaje);
+	}
+
+	//Evaluamos el nivel donde quedamos y dependiendo de la situacion enviamos un mensaje
+	// y terminamos el juego
+	function terminarPartida(nivel) {
+		if(nivel < 1 ){
+
+				acumulado = 0;
+				removerElementos();
+				mensajeJuego("Perdiste Acumulado " + acumulado + "$", "danger");
+				
+				return
+			}else 
+				if(nivel >= 5 && nivel < 10){
+					// console.log("entre");
+					acumulado = premioPorParticipar(4);
+					removerElementos();
+					mensajeJuego("Perdiste. Tu Recompensa es " + acumulado + "$", "primary");
+					
+					return
+				}
+			else 
+				if(nivel >= 10 && nivel < 15){
+					acumulado = premioPorParticipar(9);
+					removerElementos();
+					mensajeJuego("Perdiste. Tu Recompensa es " + acumulado + "$", "primary");
+					
+					return
+				}else{
+					acumulado = 0;
+					removerElementos();
+					mensajeJuego("Perdiste. Acumulado " + acumulado + "$", "danger");
+					
+					return
+				}
+	}
+
+	//Remueve los elemtos de comodines cuando termina el juego
+	function removerComodines() {
+		menu_juego.style.visibility = 'visible';
+	 	titulocomodin.style.visibility = 'hidden';
+		comodines.style.visibility = 'hidden';
+		control=0;
+	}
+
+	//FUNCION PARA LIMPIAR PANEL DE PREGUNTAS Y RESPUESTAS
+	function removerElementos() {
+			contenido.removeChild(textoPregunta);
+			contenedor1.removeChild(opcion1);
+			contenedor2.removeChild(opcion2);
+			contenedor3.removeChild(opcion3);
+			contenedor4.removeChild(opcion4);
+	}
+
+	//FUNCION PARA CREAR LOS MENSAJES DE GANADOR Y PERDEDOR
+	function mensajeJuego(mensaje, estilo) {
+		textoPregunta = document.createElement('h1');
+	  	textoPregunta.textContent =  mensaje;
+	  	textoPregunta.className += " text-" + estilo;
+	  	contenido.appendChild(textoPregunta);
+	}
+
+	function premioPorParticipar(nivel) {
+		let total = 100;
+		for (var i = 0; i < nivel; i++) {
+			total *=2; 
+		}
+		return total;
+	}
+		
+	let ronda = 
+
+			 [
+				{
+					"nivel": 0,
+					"pregunta": "Cuanto es 2 + 2 ? ",
+					"respuesta": [
+						"5",
+						"6",
+						"4",
+						"3",
+					],
+					"grafico":[
+						"20px",
+						"50px",
+						"100px",
+						"30px"
+						],
+					"correcta": 3,
+				},
+				{
+					"nivel": 1,
+					"pregunta": "Cual es la capital de Venezuela ? ",
+					"respuesta": [
+						"Caracas",
+						"Coro",
+						"Valencia",
+						"Apure",
+					],
+					"grafico":[
+						"200px",
+						"0px",
+						"0px",
+						"0px"
+						],
+					"correcta": 1,
+				},
+				{
+					"nivel": 2,
+					"pregunta": "El sistema electoral para determinar las personas que ocuparan cargos publicos ?",
+					"respuesta": [
+						"Sufragio",
+						"Adagio",
+						"Naufragio",
+						"Prestigio",
+					],
+					"grafico":[
+						"80px",
+						"70px",
+						"25px",
+						"25px"
+						],
+					"correcta": 1,
+				},
+				{
+					"nivel": 3,
+					"pregunta": "Una persona famelica esta ?",
+					"respuesta": [
+						"Irritable",
+						"Hambrienta",
+						"Furiosa",
+						"Asustada",
+					],
+					"grafico":[
+						"60px",
+						"100px",
+						"20px",
+						"20px"
+						],
+					"correcta": 2,
+				},
+				{
+					"nivel": 4,
+					"pregunta": "Jose Tomas Boves murio en la Batalla de ?",
+					"respuesta": [
+						"Carabobo",
+						"Urica",
+						"Mucuritas",
+						"Calabozo",
+					],
+					"grafico":[
+						"90px",
+						"100px",
+						"5px",
+						"5px"
+						],
+					"correcta": 2,
+				},
+				{
+					"nivel": 5,
+					"pregunta": "Son las membranas movibles cubiertas de piel que resguardan los ojos ?",
+					"respuesta": [
+						"Cejas",
+						"Pupilas",
+						"Parpados",
+						"Anteojos",
+					],
+					"grafico":[
+						"10px",
+						"90px",
+						"100px",
+						"0px"
+						],
+					"correcta": 3,
+				},
+				{
+					"nivel": 6,
+					"pregunta": "El albinismo se presenta por la carencia de ?",
+					"respuesta": [
+						"Calcio",
+						"Pigmentación",
+						"Vitamina A",
+						"Oxígeno",
+					],
+					"grafico":[
+						"50px",
+						"100px",
+						"40px",
+						"10px"
+						],
+					"correcta": 2,
+				},
+				{
+					"nivel": 7,
+					"pregunta": "Cual de estos instrumentos mide la densidad de los aceites?",
+					"respuesta": [
+						"Dinamometro",
+						"Micrometro",
+						"Oleometro",
+						"Holometro",
+					],
+					"grafico":[
+						"30px",
+						"30px",
+						"110px",
+						"30px"
+						],
+					"correcta": 3,
+				},
+				{
+					"nivel": 8,
+					"pregunta": "Complete el siguiente trabalenguas: 'Me han dicho que has dicho un dicho, un dicho que he...'",
+					"respuesta": [
+						"Escuchado",
+						"Contado",
+						"Dicho",
+						"Aprendido",
+					],
+					"grafico":[
+						"10px",
+						"10px",
+						"100px",
+						"80px"
+						],
+					"correcta": 3,
+				},
+				{
+					"nivel": 9,
+					"pregunta": "Uno de ellos canta Vamos pa' la conga ?",
+					"respuesta": [
+						"Ricardo Montaner",
+						"Guillermo Davila",
+						"Nino Bravo",
+						"Frank Quintero",
+					],
+					"grafico":[
+						"80px",
+						"40px",
+						"40px",
+						"40px"
+						],
+					"correcta": 1,
+				},
+				{
+					"nivel": 10,
+					"pregunta": "Fina Torres dirigio una de las siguientes películas:",
+					"respuesta": [
+						"Sicario",
+						"Mecanicas celestes",
+						"Tokio Paraguaipoa",
+						"Santera",
+					],
+					"grafico":[
+						"20px",
+						"150px",
+						"10px",
+						"20px"
+						],
+					"correcta": 2,
+				},
+				{
+					"nivel": 11,
+					"pregunta": "Según el refran, quien es ciego ?",
+					"respuesta": [
+						"La esperanza",
+						"El amor",
+						"El odio",
+						"La envidia",
+					],
+					"grafico":[
+						"0px",
+						"180px",
+						"20px",
+						"0px"
+						],
+					"correcta": 2,
+				},
+				{
+					"nivel": 12,
+					"pregunta": "Segun el refran, el que se acuesta a dormir, es porque cría",
+					"respuesta": [
+						"Alegría",
+						"Flojera",
+						"Fama",
+						"Sueño",
+					],
+					"grafico":[
+						"80px",
+						"10px",
+						"100px",
+						"10px"
+						],
+					"correcta": 3,
+				},
+				{
+					"nivel": 13,
+					"pregunta": "Quien dirigió la película El Padrino en 1972?",
+					"respuesta": [
+						"Roman Polanski",
+						"Franco Zeffirelli",
+						"Francis Ford Copolla",
+						"Federico Fellini",
+					],
+					"grafico":[
+						"30px",
+						"40px",
+						"110px",
+						"20px"
+						],
+					"correcta": 3,
+				},
+				{
+					"nivel": 14,
+					"pregunta": "Según la canción de los Hombres G, quien tiene un marcapasos?",
+					"respuesta": [
+						"Carla",
+						"Alba",
+						"Marta",
+						"Laura",
+					],
+					"grafico":[
+						"20px",
+						"50px",
+						"100px",
+						"30px"
+						],
+					"correcta": 3,
+				},
+				
+			];
+
+	</script>
+
+
+</body>
+</html>
